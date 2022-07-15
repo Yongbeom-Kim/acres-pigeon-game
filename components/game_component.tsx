@@ -21,8 +21,6 @@ async function game() {
     // Dynamic import for phaserJS, do not edit
     const Phaser = (await import('phaser')).default;
 
-    // alert("Game Called")!
-
     var config = {
         parent: "game-content",
         width: 800,
