@@ -4,31 +4,36 @@ import React, { useEffect } from 'react';
 
 // Embed for phaserjs game
 export default function GameComponent() {
-    useEffect(() => void game(), [])
-
-
-    return <>
-        <h1>Hello</h1>
-        <div id="game-content" />
-    </>
+    useEffect(() => {
+        const gameInstance = game();
+        
+        // Cleanup, destroy game
+        return () => void gameInstance.then((gameInstance) => gameInstance.destroy(true, false))
+    }, [])
+    return (
+    <>
+    <h1>Game</h1>
+    <div id="game-content" />
+    </> )
 };
 
 async function game() {
     // Dynamic import for phaserJS, do not edit
     const Phaser = (await import('phaser')).default;
 
+    // alert("Game Called")!
+
     var config = {
+        parent: "game-content",
         width: 800,
         height: 600,
         type: Phaser.AUTO,
-        parent: 'phaser-example',
         scene: {
             create: create,
             update: update
         }
     };
 
-    const game = new Phaser.Game(config);
     let graphics;
     let line;
     let text;
@@ -53,4 +58,9 @@ async function game() {
 
         text.setText('Line Angle: ' + Phaser.Math.RadToDeg(angle));
     }
+
+
+    const game = new Phaser.Game(config);
+
+    return game;
 }
