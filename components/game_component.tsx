@@ -6,21 +6,22 @@ import React, { useEffect } from 'react';
 export default function GameComponent() {
     useEffect(() => {
         const gameInstance = game();
-        
+
         // Cleanup, destroy game
-        return () => void gameInstance.then((gameInstance) => gameInstance.destroy(true, false))
+        return () => void gameInstance.then((instance) => instance.destroy(true, false))
     }, [])
     return (
-    <>
-    <h1>Game</h1>
-    <div id="game-content" />
-    </> )
+        <>
+            <h1>Game</h1>
+            <div id="game-content" />
+        </>)
 };
 
 async function game() {
     // Dynamic import for phaserJS, do not edit
     const Phaser = (await import('phaser')).default;
 
+    // Game code below
     var config = {
         parent: "game-content",
         width: 800,
