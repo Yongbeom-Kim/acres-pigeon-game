@@ -1,7 +1,12 @@
 // Dynamic import for phaserJS, do not edit
-const Phaser = (await import('phaser')).default;
+// Dynamic import for phaser is not needed because this module is loaded after navigator loads.
+// const Phaser = (await import('phaser')).default;
+import Phaser from 'phaser';
 
-// Game code below
+/**
+ * GAME CODE BELOW
+ */
+
 var config = {
     parent: "game-content",
     width: 800,
@@ -41,5 +46,8 @@ function update() {
 
 const Game = new Phaser.Game(config);
 
-// Game export for component, do not edit
+/**
+ * GAME CODE ABOVE
+ * Default export for game, do not edit.
+ */
 export default Game;
