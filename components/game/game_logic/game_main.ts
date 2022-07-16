@@ -7,47 +7,48 @@ import Phaser from 'phaser';
  * GAME CODE BELOW
  */
 
-var config = {
+class SampleScene extends Phaser.Scene {
+
+    constructor() {
+        super('sample-scene');
+    }
+
+    graphics!: Phaser.GameObjects.Graphics;
+    line!: Phaser.Geom.Line;
+    text!: Phaser.GameObjects.Text;
+
+    create() {
+        this.graphics = this.add.graphics({ lineStyle: { width: 4, color: 0xaa00aa } });
+
+        this.line = new Phaser.Geom.Line(200, 300, 600, 300);
+
+        this.text = this.add.text(100, 50, '');
+    }
+
+    update() {
+        Phaser.Geom.Line.Rotate(this.line, 0.02);
+
+        this.graphics.clear();
+
+        this.graphics.strokeLineShape(this.line);
+
+        var angle = Phaser.Geom.Line.Angle(this.line);
+
+        this.text.setText('Line Angle: ' + Phaser.Math.RadToDeg(angle));
+    }
+}
+
+/**
+ * GAME CODE ABOVE
+ * Game config here
+ */
+
+const config: Phaser.Types.Core.GameConfig = {
     parent: "game-content",
     width: 800,
     height: 600,
     type: Phaser.AUTO,
-    scene: {
-        create: create,
-        update: update
-    }
+    scene: [SampleScene]
 };
 
-let graphics;
-let line;
-let text;
-
-
-function create() {
-    graphics = this.add.graphics({ lineStyle: { width: 4, color: 0xaa00aa } });
-
-    line = new Phaser.Geom.Line(200, 300, 600, 300);
-
-    text = this.add.text(100, 50, '');
-}
-
-function update() {
-    Phaser.Geom.Line.Rotate(line, 0.02);
-
-    graphics.clear();
-
-    graphics.strokeLineShape(line);
-
-    var angle = Phaser.Geom.Line.Angle(line);
-
-    text.setText('Line Angle: ' + Phaser.Math.RadToDeg(angle));
-}
-
-
-const Game = new Phaser.Game(config);
-
-/**
- * GAME CODE ABOVE
- * Default export for game, do not edit.
- */
-export default Game;
+export default new Phaser.Game(config);
