@@ -16,10 +16,14 @@ export default function GameComponent() {
         // return () => void gamePromise.then((instance) => instance.destroy(true, false))
     }, [])
 
+    // useEffect(() => {
+    //     gamePromise.current?.then((instance) => instance.scale.resize(window.innerHeight, window.innerWidth));
+    // })
+
     return (
         <>
-            <h1>Game</h1>
-            <div id="game-content" />
+            {/* <h1>Game</h1> */}
+            <div id="game-content" className="game-content"/>
         </>)
 };
 

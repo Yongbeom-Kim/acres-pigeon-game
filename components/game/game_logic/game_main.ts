@@ -5,13 +5,24 @@ import Phaser from 'phaser';
 import SampleScene from './scenes/SampleScene';
 
 // Game Config
+const aspectRatio = 4/3;
+const height = window.innerHeight;
+const width = height*aspectRatio;
 
 const config: Phaser.Types.Core.GameConfig = {
     parent: "game-content",
-    width: 800,
-    height: 600,
     type: Phaser.AUTO,
-    scene: [SampleScene]
-};
+    scene: [SampleScene],
+    backgroundColor: '#FFFFFF',
+    // width: 400,
+    // height: 300,
+    scale: {
+        mode: Phaser.Scale.NONE,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+        width: width,
+        height: height,
 
-export default new Phaser.Game(config);
+    }
+};
+const game = new Phaser.Game(config);
+export default game

@@ -2,6 +2,20 @@ html,
 body {
   padding: 0;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+}
+
+::backdrop, :root{
+  background-color: black;
+}
+
+canvas {
+  margin: 0;
+  padding: 0;
+  /* This prevents top and bottom margins, for some reason? */
+  display: block; 
+}
+
+div#game-content {
+  margin: 0;
+  padding: 0;
 }
