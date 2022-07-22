@@ -15,7 +15,8 @@ const width = 800;
 const config: Phaser.Types.Core.GameConfig = {
     parent: "game-content",
     type: Phaser.AUTO,
-    scene: [SampleScene, MainScene],
+    // scene: [SampleScene, MainScene],
+    scene: [MainScene],
     backgroundColor: '#000000',
     scale: {
         mode: Phaser.Scale.FIT,

@@ -1,7 +1,8 @@
 // We need these import statements to tell NextJS to build the pages together with this page.
-import { debug } from 'console';
 import background from './assets/background_600x800.png';
-
+import action_button_spritesheet from './assets/actions_button_spritesheet.png';
+import action_button_json from './assets/actions_button_spritesheet.json' assert {type: 'json'};
+import make_hover_button from '../../utils/make_hover_button';
 
 
 export default class MainScene extends Phaser.Scene {
@@ -9,6 +10,7 @@ export default class MainScene extends Phaser.Scene {
     // See StartScene.ts for why I do this nonsense
     static SCENE_KEY = 'main-scene' + Math.random();
     static BACKGROUND_KEY = this.SCENE_KEY + 'background';
+    static ACTION_BUTTON_KEY = this.SCENE_KEY + 'action-button';
 
     // Game values to be tweaked with
     /**
@@ -20,17 +22,21 @@ export default class MainScene extends Phaser.Scene {
      */
     pigeon_number = 10;
     carrying_capacity = 1000;
-    constant_proportionality = 0.03;
+    coefficient = 0.03;
 
-    debug_pigeon_number!: Phaser.GameObjects.Text;
-    debug_carrying_capacity!: Phaser.GameObjects.Text;
-    debug_constant!: Phaser.GameObjects.Text;
+    actionButton!: Phaser.GameObjects.Sprite;
+    lineGraphGroup!: Phaser.GameObjects.Group;
+
+    debugElements!: DebugElements;
 
     updatePigeonGrowth() {
-        this.pigeon_number += this.constant_proportionality * (this.carrying_capacity - this.pigeon_number) / this.carrying_capacity * this.pigeon_number;
-        this.debug_pigeon_number.setText("Pigeon number: " + Math.round(this.pigeon_number));
-        this.debug_carrying_capacity.setText("Carrying capacity: " + this.carrying_capacity);
-        this.debug_constant.setText("Constant of Proportionality: " + this.constant_proportionality);
+        // Just a small optimisation
+        if (this.pigeon_number >= this.carrying_capacity - 1) {
+            return;
+        }
+
+        // These are values for debug purposes - TODO (deployment): remove
+        this.pigeon_number += this.coefficient * (this.carrying_capacity - this.pigeon_number) / this.carrying_capacity * this.pigeon_number;
     }
 
     constructor() {
@@ -39,6 +45,7 @@ export default class MainScene extends Phaser.Scene {
 
     preload() {
         this.load.image(MainScene.BACKGROUND_KEY, background.src)
+        this.load.spritesheet(MainScene.ACTION_BUTTON_KEY, action_button_spritesheet.src, action_button_json)
     }
 
     create() {
@@ -49,9 +56,13 @@ export default class MainScene extends Phaser.Scene {
             this.cameras.main.height / background.height
         ));
 
-        this.debug_pigeon_number = this.add.text(100, 100, "").setColor('#000000')
-        this.debug_carrying_capacity = this.add.text(100, 120, "").setColor('#000000')
-        this.debug_constant = this.add.text(100, 140, "").setColor('#000000')
+        // Debug elements
+        this.debugElements = new DebugElements(this);
+
+        // Buttons
+        this.actionButton = make_hover_button(this.add.sprite(10, this.scale.height - 10, MainScene.ACTION_BUTTON_KEY))
+            .setOrigin(0, 1)
+            .setScale(0.5);
 
         // Update pigeon growth every 200ms
         // setInterval(() => this.updatePigeonGrowth(), 200)
@@ -65,6 +76,29 @@ export default class MainScene extends Phaser.Scene {
     }
 
     update() {
-        
+        this.debugElements.updateElements(this.pigeon_number, this.carrying_capacity, this.coefficient);
+    }
+}
+
+
+class DebugElements {
+    scene: Phaser.Scene;
+
+    pigeon_number_element: Phaser.GameObjects.Text;
+    carrying_capacity_element: Phaser.GameObjects.Text;
+    coefficient_element: Phaser.GameObjects.Text;
+
+    constructor(scene: Phaser.Scene) {
+        this.scene = scene;
+
+        this.pigeon_number_element = this.scene.add.text(100, 100, "").setColor('#000000')
+        this.carrying_capacity_element = this.scene.add.text(100, 120, "").setColor('#000000')
+        this.coefficient_element = this.scene.add.text(100, 140, "").setColor('#000000')
+    }
+
+    updateElements(pigeon_number: number, carrying_capacity: number, coefficient: number) {
+        this.pigeon_number_element.setText("Pigeon number: " + Math.round(pigeon_number));
+        this.carrying_capacity_element.setText("Carrying capacity: " + carrying_capacity);
+        this.coefficient_element.setText("Constant of Proportionality: " + coefficient);
     }
 }
