@@ -48,13 +48,13 @@ export default class MainScene extends Phaser.Scene {
         this.prevPigeonNumber = 20;
         let x = 20 + this.actionButton.width / 2;
 
+        const pigeonSimulation = new PigeonSimulation(this, 200)
+
         const debugElements = new DebugElements(this);
-        const pigeonSimulation = new PigeonSimulation(this, 200, (n, cap, coe) => {
+        pigeonSimulation.addUpdateListener((n, cap, coe) => {
             debugElements.updateElements(n, cap, coe);
-            if (this.prevPigeonNumber !== n) {
-                const line = this.add.line(0, 0, x, this.scale.height - (this.prevPigeonNumber) / 2, ++x, this.scale.height - n / 2, 0x000000)
-                this.lineGraphGroup.add(line);
-            }
+            const line = this.add.line(0, 0, x, this.scale.height - (this.prevPigeonNumber) / 2, ++x, this.scale.height - n / 2, 0x000000)
+            this.lineGraphGroup.add(line);
             this.prevPigeonNumber = n;
         });
 
@@ -77,10 +77,17 @@ class PigeonSimulation {
     private _carrying_capacity = 1000;
     private _coefficient = 0.03;
 
+    // List of update callbacks to be called when the pigeon simulation is updated
+    private _onChangeCallbacks: Array<Function> = [];
+
     update_interval: integer;
 
     /**
      * Starts the pigeon growth simulation with an attached simulation event handler
+     * A time interval event starts with:
+     * (1) update simluation, and
+     * (2) calls every function in this._onChangeCallbacks
+     * 
      * @param scene scene that simulation is attached to
      * @param update_interval update interval for simulation in milliseconds
      * @param onUpdate callback function to be called
@@ -92,21 +99,26 @@ class PigeonSimulation {
     ) {
 
         this.update_interval = update_interval;
+        if (typeof onUpdate !== 'undefined') {
+            this._onChangeCallbacks.push(onUpdate);
+        }
+
         scene.time.addEvent({
             callbackScope: this,
             delay: 200,
             loop: true,
             callback: () => {
                 this.update();
-                if (typeof onUpdate === 'undefined') {
-                    return;
-                } else if (onUpdate.length == 0) {
-                    // This should be okay, im checking the argument length of the function
-                    // @ts-ignore
-                    onUpdate();
-                } else {
-                    onUpdate(Math.round(this._pigeon_number), Math.round(this._carrying_capacity), this._coefficient)
-                }
+
+                this._onChangeCallbacks.forEach((onUpdate) => {
+                    if (onUpdate.length == 0) {
+                        // This should be okay, im checking the argument length of the function
+                        // @ts-ignore
+                        onUpdate();
+                    } else {
+                        onUpdate(Math.round(this._pigeon_number), Math.round(this._carrying_capacity), this._coefficient)
+                    }
+                });
             }
         })
     }
@@ -117,6 +129,14 @@ class PigeonSimulation {
             return;
         }
         this._pigeon_number += this._coefficient * (this._carrying_capacity - this._pigeon_number) / this._carrying_capacity * this._pigeon_number;
+    }
+
+    /**
+     * Add a function callback to listen for updates in the simulation
+     * @param onUpdate function callback to be called
+     */
+    addUpdateListener(onUpdate: (() => void) | ((pigeonNumber: integer, carrying_capacity: integer, coefficient: number) => void)) {
+        this._onChangeCallbacks.push(onUpdate);
     }
 
     get pigeonNumber() {
