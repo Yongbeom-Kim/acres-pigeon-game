@@ -37,7 +37,7 @@ export default class MainScene extends Phaser.Scene {
         ));
 
         const debugElements = new DebugElements(this);
-        new PigeonSimulation(this, 200, (n, cap, coe) => debugElements.updateElements(n, cap, coe))
+        const pigeonSimulation = new PigeonSimulation(this, 200, (n, cap, coe) => debugElements.updateElements(n, cap, coe));
 
         // Buttons
         this.actionButton = make_hover_button(this.add.sprite(10, this.scale.height - 10, MainScene.ACTION_BUTTON_KEY))
@@ -61,9 +61,9 @@ class PigeonSimulation {
      * L: limit (carrying capacity)
      * r: contant of proportionality
      */
-    pigeon_number = 10;
-    carrying_capacity = 1000;
-    coefficient = 0.03;
+    private _pigeon_number = 10;
+    private _carrying_capacity = 1000;
+    private _coefficient = 0.03;
 
     update_interval: integer;
 
@@ -93,7 +93,7 @@ class PigeonSimulation {
                     // @ts-ignore
                     onUpdate();
                 } else {
-                    onUpdate(Math.round(this.pigeon_number), Math.round(this.carrying_capacity), this.coefficient)
+                    onUpdate(Math.round(this._pigeon_number), Math.round(this._carrying_capacity), this._coefficient)
                 }
             }
         })
@@ -101,13 +101,27 @@ class PigeonSimulation {
 
     update() {
         // Just a small optimisation
-        if (this.pigeon_number >= this.carrying_capacity - 1) {
+        if (this._pigeon_number >= this._carrying_capacity - 1) {
             return;
         }
-        this.pigeon_number += this.coefficient * (this.carrying_capacity - this.pigeon_number) / this.carrying_capacity * this.pigeon_number;
+        this._pigeon_number += this._coefficient * (this._carrying_capacity - this._pigeon_number) / this._carrying_capacity * this._pigeon_number;
     }
 
+    get pigeonNumber() {
+        return this._pigeon_number;
+    }
+
+    get carryingCapacity() {
+        return this._carrying_capacity;
+    }
+    
+    get coefficient() {
+        return this._coefficient;
+    }
+
+
 }
+
 class DebugElements {
     scene: Phaser.Scene;
 
