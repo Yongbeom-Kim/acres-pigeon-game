@@ -43,7 +43,7 @@ export default class MainScene extends Phaser.Scene {
         this.actionButton = make_hover_button(this.add.sprite(10, this.scale.height - 10, MainScene.ACTION_BUTTON_KEY))
             .setOrigin(0, 1);
 
-        const pigeonSimulation = new PigeonSimulation(this, 200)
+        const pigeonSimulation = new PigeonSimulation(this, 50)
         const pigeonSimulationGraph = new PigeonSimulationGraph(
             this, 
             20, 
@@ -76,7 +76,7 @@ class PigeonSimulation {
      * r: contant of proportionality
      */
     private _pigeon_number = 10;
-    private _carrying_capacity = 10000;
+    private _carrying_capacity = 1000;
     private _coefficient = 0.03;
 
     // List of update callbacks to be called when the pigeon simulation is updated
@@ -166,9 +166,9 @@ class DebugElements {
     constructor(scene: Phaser.Scene) {
         this.scene = scene;
 
-        this.pigeon_number_element = this.scene.add.text(100, 100, "").setColor('#000000')
-        this.carrying_capacity_element = this.scene.add.text(100, 120, "").setColor('#000000')
-        this.coefficient_element = this.scene.add.text(100, 140, "").setColor('#000000')
+        this.pigeon_number_element = this.scene.add.text(100, 400, "").setColor('#000000')
+        this.carrying_capacity_element = this.scene.add.text(100, 420, "").setColor('#000000')
+        this.coefficient_element = this.scene.add.text(100, 440, "").setColor('#000000')
     }
 
     updateElements(pigeon_number: integer, carrying_capacity: integer, coefficient: number) {

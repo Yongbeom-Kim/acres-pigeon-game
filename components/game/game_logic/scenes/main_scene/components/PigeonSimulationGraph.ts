@@ -24,23 +24,21 @@ export default class PigeonSimulationGraph {
         this.scene = scene;
         this.lineGraphGroup = scene.add.group();
         this.prevPigeonPopulation = initialPigeonPopulation;
-        this.minX = minX;
-        this.maxX = maxX;
-        this.minY = minY;
-        this.maxY = maxY;
+        this.minX = minX+10;
+        this.maxX = maxX-10;
+        this.minY = minY+10;
+        this.maxY = maxY-10;
 
         this.deltaX = xStep;
         this.deltaY = 0;
 
+        const background_rectangle = this.scene.add.rectangle(minX, minY, maxX - minX, maxY - minY, 0x999999).setOrigin(0, 0);
+
     }
+
 
     update(newPigeonPopulation: integer) {
 
-        // const newLine = this.scene.add.line(
-        //     0, 0,
-        //     this.maxX - this.xStep, this.getYCoord(this.prevPigeonPopulation),
-        //     this.maxX, this.getYCoord(newPigeonPopulation),
-        //     0x000000);
         this.deltaY = this.getYCoord(newPigeonPopulation) - this.getYCoord(this.prevPigeonPopulation);
 
         const newLine = this.scene.add.line(
