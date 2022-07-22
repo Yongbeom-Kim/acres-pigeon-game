@@ -13,31 +13,11 @@ export default class MainScene extends Phaser.Scene {
     static ACTION_BUTTON_KEY = this.SCENE_KEY + 'action-button';
 
     // Game values to be tweaked with
-    /**
-     * We are using the logistic growth model:
-     * dN/dt = r(L-N)/L*N
-     * N: no. pigeons
-     * L: limit (carrying capacity)
-     * r: contant of proportionality
-     */
-    pigeon_number = 10;
-    carrying_capacity = 1000;
-    coefficient = 0.03;
+
 
     actionButton!: Phaser.GameObjects.Sprite;
     lineGraphGroup!: Phaser.GameObjects.Group;
 
-    debugElements!: DebugElements;
-
-    updatePigeonGrowth() {
-        // Just a small optimisation
-        if (this.pigeon_number >= this.carrying_capacity - 1) {
-            return;
-        }
-
-        // These are values for debug purposes - TODO (deployment): remove
-        this.pigeon_number += this.coefficient * (this.carrying_capacity - this.pigeon_number) / this.carrying_capacity * this.pigeon_number;
-    }
 
     constructor() {
         super(MainScene.SCENE_KEY);
@@ -56,8 +36,8 @@ export default class MainScene extends Phaser.Scene {
             this.cameras.main.height / background.height
         ));
 
-        // Debug elements
-        this.debugElements = new DebugElements(this);
+        const debugElements = new DebugElements(this);
+        new PigeonSimulation(this, 200, (n, cap, coe) => debugElements.updateElements(n, cap, coe))
 
         // Buttons
         this.actionButton = make_hover_button(this.add.sprite(10, this.scale.height - 10, MainScene.ACTION_BUTTON_KEY))
@@ -66,21 +46,68 @@ export default class MainScene extends Phaser.Scene {
 
         // Update pigeon growth every 200ms
         // setInterval(() => this.updatePigeonGrowth(), 200)
-        this.time.addEvent({
-            callbackScope: this,
-            delay: 200,
-            loop: true,
-            callback: () => this.updatePigeonGrowth()
-        })
         this.cameras.main.fadeIn(1000, 0, 0, 0);
     }
 
     update() {
-        this.debugElements.updateElements(this.pigeon_number, this.carrying_capacity, this.coefficient);
     }
 }
 
+class PigeonSimulation {
+    /**
+     * We are using the logistic growth model:
+     * dN/dt = r(L-N)/L*N
+     * N: no. pigeons
+     * L: limit (carrying capacity)
+     * r: contant of proportionality
+     */
+    pigeon_number = 10;
+    carrying_capacity = 1000;
+    coefficient = 0.03;
 
+    update_interval: integer;
+
+    /**
+     * Starts the pigeon growth simulation with an attached simulation event handler
+     * @param scene scene that simulation is attached to
+     * @param update_interval update interval for simulation in milliseconds
+     * @param onUpdate callback function to be called
+     */
+    constructor(
+        scene: Phaser.Scene,
+        update_interval: number,
+        onUpdate?: (() => void) | ((pigeonNumber: integer, carrying_capacity: integer, coefficient: number) => void)
+    ) {
+
+        this.update_interval = update_interval;
+        scene.time.addEvent({
+            callbackScope: this,
+            delay: 200,
+            loop: true,
+            callback: () => {
+                this.update();
+                if (typeof onUpdate === 'undefined') {
+                    return;
+                } else if (onUpdate.length == 0){
+                    // This should be okay, im checking the argument length of the function
+                    // @ts-ignore
+                    onUpdate();
+                } else {
+                    onUpdate(Math.round(this.pigeon_number), Math.round(this.carrying_capacity), this.coefficient)
+                }
+            }
+        })
+    }
+
+    update() {
+        // Just a small optimisation
+        if (this.pigeon_number >= this.carrying_capacity - 1) {
+            return;
+        }
+        this.pigeon_number += this.coefficient * (this.carrying_capacity - this.pigeon_number) / this.carrying_capacity * this.pigeon_number;
+    }
+
+}
 class DebugElements {
     scene: Phaser.Scene;
 
@@ -96,8 +123,8 @@ class DebugElements {
         this.coefficient_element = this.scene.add.text(100, 140, "").setColor('#000000')
     }
 
-    updateElements(pigeon_number: number, carrying_capacity: number, coefficient: number) {
-        this.pigeon_number_element.setText("Pigeon number: " + Math.round(pigeon_number));
+    updateElements(pigeon_number: integer, carrying_capacity: integer, coefficient: number) {
+        this.pigeon_number_element.setText("Pigeon number: " + pigeon_number);
         this.carrying_capacity_element.setText("Carrying capacity: " + carrying_capacity);
         this.coefficient_element.setText("Constant of Proportionality: " + coefficient);
     }
