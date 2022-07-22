@@ -44,13 +44,13 @@ export default class MainScene extends Phaser.Scene {
             .setOrigin(0, 1);
 
         const pigeonSimulation = new PigeonSimulation(this, 200)
-        const pigeonSimulationGraph = new PigeonSimulationGraph(this, 20, 20 + this.actionButton.width, 2)
+        const pigeonSimulationGraph = new PigeonSimulationGraph(this, 20, 20 + this.actionButton.width, this.scale.height, 2)
 
         const debugElements = new DebugElements(this);
 
         pigeonSimulation.addUpdateListener((n, cap, coe) => {
             debugElements.updateElements(n, cap, coe);
-            pigeonSimulationGraph.addNextLine(n);
+            pigeonSimulationGraph.update(n);
         });
 
         this.cameras.main.fadeIn(1000, 0, 0, 0)
