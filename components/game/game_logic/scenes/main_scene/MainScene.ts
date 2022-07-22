@@ -45,9 +45,9 @@ export default class MainScene extends Phaser.Scene {
 
         const pigeonSimulation = new PigeonSimulation(this, 50)
         const pigeonSimulationGraph = new PigeonSimulationGraph(
-            this, 
-            20, 
-            20 + this.actionButton.width, this.scale.width*2/3, 
+            this,
+            20,
+            20 + this.actionButton.width, this.scale.width * 2 / 3,
             this.scale.height - 100, this.scale.height,
             2)
 
@@ -75,7 +75,7 @@ class PigeonSimulation {
      * L: limit (carrying capacity)
      * r: contant of proportionality
      */
-    private _pigeon_number = 10;
+    private _pigeon_number = 20;
     private _carrying_capacity = 1000;
     private _coefficient = 0.03;
 
@@ -126,11 +126,8 @@ class PigeonSimulation {
     }
 
     update() {
-        // Just a small optimisation
-        if (this._pigeon_number >= this._carrying_capacity - 1) {
-            return;
-        }
-        this._pigeon_number += this._coefficient * (this._carrying_capacity - this._pigeon_number) / this._carrying_capacity * this._pigeon_number;
+        this._pigeon_number += this._coefficient * (this._carrying_capacity - this._pigeon_number) / this._carrying_capacity * this._pigeon_number
+            + (Math.random()-0.5)*Math.log(this.pigeonNumber)*2;
     }
 
     /**
