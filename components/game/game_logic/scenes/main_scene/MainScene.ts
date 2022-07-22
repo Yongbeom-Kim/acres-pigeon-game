@@ -56,7 +56,6 @@ export default class MainScene extends Phaser.Scene {
             const line = this.add.line(0, 0, x, this.scale.height - (this.prevPigeonNumber) / 2, ++x, this.scale.height - n / 2, 0x000000)
             this.lineGraphGroup.add(line);
             this.prevPigeonNumber = n;
-            console.log(this.prevPigeonNumber);
         });
 
         this.cameras.main.fadeIn(1000, 0, 0, 0)
