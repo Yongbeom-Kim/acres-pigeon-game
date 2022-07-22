@@ -17,6 +17,7 @@ export default class MainScene extends Phaser.Scene {
 
     actionButton!: Phaser.GameObjects.Sprite;
     lineGraphGroup!: Phaser.GameObjects.Group;
+    prevPigeonNumber!: number;
 
 
     constructor() {
@@ -36,17 +37,28 @@ export default class MainScene extends Phaser.Scene {
             this.cameras.main.height / background.height
         ));
 
-        const debugElements = new DebugElements(this);
-        const pigeonSimulation = new PigeonSimulation(this, 200, (n, cap, coe) => debugElements.updateElements(n, cap, coe));
 
         // Buttons
         this.actionButton = make_hover_button(this.add.sprite(10, this.scale.height - 10, MainScene.ACTION_BUTTON_KEY))
             .setOrigin(0, 1)
             .setScale(0.5);
 
-        // Update pigeon growth every 200ms
-        // setInterval(() => this.updatePigeonGrowth(), 200)
-        this.cameras.main.fadeIn(1000, 0, 0, 0);
+        // Line Graph
+        this.lineGraphGroup = this.add.group();
+        this.prevPigeonNumber = 20;
+        let x = 20 + this.actionButton.width / 2;
+
+        const debugElements = new DebugElements(this);
+        const pigeonSimulation = new PigeonSimulation(this, 200, (n, cap, coe) => {
+            debugElements.updateElements(n, cap, coe);
+            if (this.prevPigeonNumber !== n) {
+                const line = this.add.line(0, 0, x, this.scale.height - (this.prevPigeonNumber) / 2, ++x, this.scale.height - n / 2, 0x000000)
+                this.lineGraphGroup.add(line);
+            }
+            this.prevPigeonNumber = n;
+        });
+
+        this.cameras.main.fadeIn(1000, 0, 0, 0)
     }
 
     update() {
@@ -88,7 +100,7 @@ class PigeonSimulation {
                 this.update();
                 if (typeof onUpdate === 'undefined') {
                     return;
-                } else if (onUpdate.length == 0){
+                } else if (onUpdate.length == 0) {
                     // This should be okay, im checking the argument length of the function
                     // @ts-ignore
                     onUpdate();
@@ -114,7 +126,7 @@ class PigeonSimulation {
     get carryingCapacity() {
         return this._carrying_capacity;
     }
-    
+
     get coefficient() {
         return this._coefficient;
     }
