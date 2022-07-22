@@ -44,7 +44,12 @@ export default class MainScene extends Phaser.Scene {
             .setOrigin(0, 1);
 
         const pigeonSimulation = new PigeonSimulation(this, 200)
-        const pigeonSimulationGraph = new PigeonSimulationGraph(this, 20, 20 + this.actionButton.width, this.scale.height, 2)
+        const pigeonSimulationGraph = new PigeonSimulationGraph(
+            this, 
+            20, 
+            20 + this.actionButton.width, this.scale.width*2/3, 
+            this.scale.height - 100, this.scale.height,
+            2)
 
         const debugElements = new DebugElements(this);
 
@@ -71,7 +76,7 @@ class PigeonSimulation {
      * r: contant of proportionality
      */
     private _pigeon_number = 10;
-    private _carrying_capacity = 1000;
+    private _carrying_capacity = 10000;
     private _coefficient = 0.03;
 
     // List of update callbacks to be called when the pigeon simulation is updated
@@ -102,7 +107,7 @@ class PigeonSimulation {
 
         scene.time.addEvent({
             callbackScope: this,
-            delay: 200,
+            delay: update_interval,
             loop: true,
             callback: () => {
                 this.update();
