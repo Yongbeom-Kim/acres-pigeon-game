@@ -2,7 +2,7 @@
 // Dynamic import for phaser is not needed because this module is loaded after navigator loads.
 // const Phaser = (await import('phaser')).default;
 import Phaser from 'phaser';
-import SampleScene from './scenes/SampleScene';
+import SampleScene from './scenes/start_scene/StartScene';
 
 // Game Config
 const aspectRatio = 3/2;
@@ -17,7 +17,7 @@ const config: Phaser.Types.Core.GameConfig = {
     scene: [SampleScene],
     backgroundColor: '#FFFFFF',
     scale: {
-        mode: Phaser.Scale.HEIGHT_CONTROLS_WIDTH,
+        mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,
         width: width,
         height: height,
