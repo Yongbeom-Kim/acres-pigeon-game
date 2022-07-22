@@ -43,13 +43,13 @@ export default class MainScene extends Phaser.Scene {
         this.actionButton = make_hover_button(this.add.sprite(10, this.scale.height - 10, MainScene.ACTION_BUTTON_KEY))
             .setOrigin(0, 1);
 
-        const pigeonSimulation = new PigeonSimulation(this, 50)
+        const pigeonSimulation = new PigeonSimulation(this, 20, 1000, 0.03, 200)
         const pigeonSimulationGraph = new PigeonSimulationGraph(
             this,
             20,
             20 + this.actionButton.width, this.scale.width * 2 / 3,
             this.scale.height - 100, this.scale.height,
-            2)
+            Math.round(Math.E ** (20*pigeonSimulation.coefficient)))
 
         const debugElements = new DebugElements(this);
 
@@ -75,9 +75,9 @@ class PigeonSimulation {
      * L: limit (carrying capacity)
      * r: contant of proportionality
      */
-    private _pigeon_number = 20;
-    private _carrying_capacity = 1000;
-    private _coefficient = 0.03;
+    private _pigeon_number;
+    private _carrying_capacity;
+    private _coefficient;
 
     // List of update callbacks to be called when the pigeon simulation is updated
     private _onChangeCallbacks: Array<Function> = [];
@@ -96,11 +96,17 @@ class PigeonSimulation {
      */
     constructor(
         scene: Phaser.Scene,
+        pigeon_number: integer,
+        carrying_capacity: integer,
+        coefficient: integer,
         update_interval: number,
         onUpdate?: (() => void) | ((pigeonNumber: integer, carrying_capacity: integer, coefficient: number) => void)
     ) {
-
+        this._pigeon_number = pigeon_number;
+        this._carrying_capacity = carrying_capacity;
+        this._coefficient = coefficient;
         this.update_interval = update_interval;
+
         if (typeof onUpdate !== 'undefined') {
             this._onChangeCallbacks.push(onUpdate);
         }
@@ -127,7 +133,7 @@ class PigeonSimulation {
 
     update() {
         this._pigeon_number += this._coefficient * (this._carrying_capacity - this._pigeon_number) / this._carrying_capacity * this._pigeon_number
-            + (Math.random()-0.5)*Math.log(this.pigeonNumber)*2;
+            + (Math.random() - 0.5) * Math.log(this.pigeonNumber) * 2;
     }
 
     /**
