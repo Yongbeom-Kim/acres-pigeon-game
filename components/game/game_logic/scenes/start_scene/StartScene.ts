@@ -3,35 +3,39 @@ import background from './assets/background_600x800.png';
 import start_game_button_spritesheet from './assets/start_button_spritesheet.png';
 import start_game_button_json from './assets/start_button_spritesheet.json' assert {type: 'json'};
 
+// I'm so annoyed WTF? The image keys in Phaser are GLOBAL NAMESPACE like what the heck man, so I can't use
+// 'background' key multiple times in different scenes, this is just bad design
+// TODO: Maybe performance may be an issue with Math.random
+const SCENE_KEY = 'start-scene' + Math.random();
+const BACKGROUND_KEY = SCENE_KEY + 'background';
+const START_BUTTO_KEY = SCENE_KEY + 'start';
+
 export default class SampleScene extends Phaser.Scene {
 
     constructor() {
-        super('sample-scene');
+        super(SCENE_KEY);
     }
 
-    graphics!: Phaser.GameObjects.Graphics;
-    line!: Phaser.Geom.Line;
-    text!: Phaser.GameObjects.Text;
-
     preload() {
-        this.load.image('background', background.src)
-        this.load.spritesheet('start_game_button', start_game_button_spritesheet.src, start_game_button_json)
+        this.load.image(BACKGROUND_KEY, background.src)
+        this.load.spritesheet(START_BUTTO_KEY, start_game_button_spritesheet.src, start_game_button_json)
     }
 
     create() {
         // Background, and stretch background to fit screen.
-        const background = this.add.image(0, 0, 'background').setOrigin(0, 0);
+        const background = this.add.image(0, 0, BACKGROUND_KEY).setOrigin(0, 0);
         background.setScale(Math.max(
             this.cameras.main.width / background.width,
             this.cameras.main.height / background.height
         ));
 
-        const start_game_button = this.add.sprite(this.scale.width / 2, this.scale.height / 2, 'start_game_button');
+        const start_game_button = this.add.sprite(this.scale.width / 2, this.scale.height / 2, START_BUTTO_KEY);
         start_game_button.setInteractive();
 
         // Make button interactive
         start_game_button.on('pointerover', () => start_game_button.setFrame(1));
         start_game_button.on('pointerout', () => start_game_button.setFrame(0));
+        start_game_button.on('pointerdown', () => this.scene.start('main-scene'))
 
 
 

@@ -2,6 +2,7 @@
 // Dynamic import for phaser is not needed because this module is loaded after navigator loads.
 // const Phaser = (await import('phaser')).default;
 import Phaser from 'phaser';
+import MainScene from './scenes/main_scene/MainScene';
 import SampleScene from './scenes/start_scene/StartScene';
 
 // Game Config
@@ -14,7 +15,7 @@ const width = 800;
 const config: Phaser.Types.Core.GameConfig = {
     parent: "game-content",
     type: Phaser.AUTO,
-    scene: [SampleScene],
+    scene: [SampleScene, MainScene],
     backgroundColor: '#FFFFFF',
     scale: {
         mode: Phaser.Scale.FIT,
