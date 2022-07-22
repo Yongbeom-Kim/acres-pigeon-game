@@ -16,7 +16,7 @@ const config: Phaser.Types.Core.GameConfig = {
     parent: "game-content",
     type: Phaser.AUTO,
     scene: [SampleScene, MainScene],
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#000000',
     scale: {
         mode: Phaser.Scale.FIT,
         autoCenter: Phaser.Scale.CENTER_BOTH,

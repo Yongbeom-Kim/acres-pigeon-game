@@ -2,11 +2,12 @@
 import background from './assets/background_600x800.png';
 import start_game_button_spritesheet from './assets/start_button_spritesheet.png';
 import start_game_button_json from './assets/start_button_spritesheet.json' assert {type: 'json'};
+import MainScene from '../main_scene/MainScene';
 
 // I'm so annoyed WTF? The image keys in Phaser are GLOBAL NAMESPACE like what the heck man, so I can't use
 // 'background' key multiple times in different scenes, this is just bad design
 // TODO: Maybe performance may be an issue with Math.random
-const SCENE_KEY = 'start-scene' + Math.random();
+export const SCENE_KEY = 'start-scene' + Math.random();
 const BACKGROUND_KEY = SCENE_KEY + 'background';
 const START_BUTTO_KEY = SCENE_KEY + 'start';
 
@@ -35,7 +36,15 @@ export default class SampleScene extends Phaser.Scene {
         // Make button interactive
         start_game_button.on('pointerover', () => start_game_button.setFrame(1));
         start_game_button.on('pointerout', () => start_game_button.setFrame(0));
-        start_game_button.on('pointerdown', () => this.scene.start('main-scene'))
+
+        start_game_button.on('pointerdown', () => {
+            // Very nice fade scene transition!
+            this.cameras.main.fadeOut(1000, 0, 0, 0)
+
+            this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
+                this.scene.start(MainScene.SCENE_KEY);
+            })
+        });
 
 
 
