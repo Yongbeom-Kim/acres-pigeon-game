@@ -3,6 +3,7 @@ import background from './assets/background_600x800.png';
 import action_button_spritesheet from './assets/actions_button_spritesheet.png';
 import action_button_json from './assets/actions_button_spritesheet.json' assert {type: 'json'};
 import make_hover_button from '../../utils/make_hover_button';
+import PigeonSimulationGraph from './components/PigeonSimulationGraph';
 
 
 export default class MainScene extends Phaser.Scene {
@@ -40,22 +41,16 @@ export default class MainScene extends Phaser.Scene {
 
         // Buttons
         this.actionButton = make_hover_button(this.add.sprite(10, this.scale.height - 10, MainScene.ACTION_BUTTON_KEY))
-            .setOrigin(0, 1)
-            .setScale(0.5);
-
-        // Line Graph
-        this.lineGraphGroup = this.add.group();
-        this.prevPigeonNumber = 20;
-        let x = 20 + this.actionButton.width / 2;
+            .setOrigin(0, 1);
 
         const pigeonSimulation = new PigeonSimulation(this, 200)
+        const pigeonSimulationGraph = new PigeonSimulationGraph(this, 20, 20 + this.actionButton.width, 2)
 
         const debugElements = new DebugElements(this);
+
         pigeonSimulation.addUpdateListener((n, cap, coe) => {
             debugElements.updateElements(n, cap, coe);
-            const line = this.add.line(0, 0, x, this.scale.height - (this.prevPigeonNumber) / 2, ++x, this.scale.height - n / 2, 0x000000)
-            this.lineGraphGroup.add(line);
-            this.prevPigeonNumber = n;
+            pigeonSimulationGraph.addNextLine(n);
         });
 
         this.cameras.main.fadeIn(1000, 0, 0, 0)
@@ -64,6 +59,8 @@ export default class MainScene extends Phaser.Scene {
     update() {
     }
 }
+
+
 
 class PigeonSimulation {
     /**
