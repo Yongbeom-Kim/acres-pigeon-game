@@ -26,6 +26,8 @@ export default class PigeonSimulationGraph {
         this.scene = scene;
         this.lineGraphGroup = scene.add.group();
         this.prevPigeonPopulation = initialPigeonPopulation;
+
+        // Small borders off the background reactangle
         this.minX = minX + 10;
         this.maxX = maxX - 10;
         this.minY = minY + 10;
@@ -44,7 +46,7 @@ export default class PigeonSimulationGraph {
         this.deltaY = this.getYCoord(newPigeonPopulation) - this.getYCoord(this.prevPigeonPopulation);
 
         const newLine = this.scene.add.line(
-            this.maxX, (this.minY + this.maxY)/2,
+            this.maxX, (this.minY + this.maxY) / 2,
             - this.deltaX, - this.deltaY,
             0, 0,
             0x000000);
@@ -55,10 +57,12 @@ export default class PigeonSimulationGraph {
         this.lineGraphGroup.add(newLine);
         this.prevPigeonPopulation = newPigeonPopulation;
 
+        // this type cast is OK, everything in group is a line.
+        // @ts-ignore
+        const children: Phaser.GameObjects.Line[] = this.lineGraphGroup.getChildren()
+
         // Delete lines exceeding the min x boundary, hide lines exceeding y boundaries
-        this.lineGraphGroup.getChildren().forEach(
-            // this type cast is OK, everything in group is a line.
-            // @ts-ignore
+        children.forEach(
             (child: Phaser.GameObjects.Line) => {
                 // console.log(child.x + this.xRight)
                 if (child.x < this.minX) {
