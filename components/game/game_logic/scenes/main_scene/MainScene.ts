@@ -43,7 +43,7 @@ export default class MainScene extends Phaser.Scene {
         this.actionButton = make_hover_button(this.add.sprite(10, this.scale.height - 10, MainScene.ACTION_BUTTON_KEY))
             .setOrigin(0, 1);
 
-        const pigeonSimulation = new PigeonSimulation(this, 20, 1000, 0.03, 200)
+        const pigeonSimulation = new PigeonSimulation(this, 20, 1000, 0.03, 50)
         const pigeonSimulationGraph = new PigeonSimulationGraph(
             this,
             20,

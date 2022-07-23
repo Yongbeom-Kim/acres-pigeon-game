@@ -1,3 +1,5 @@
+import { captureRejectionSymbol } from "events";
+
 export default class PigeonSimulationGraph {
 
     scene: Phaser.Scene;
@@ -24,10 +26,10 @@ export default class PigeonSimulationGraph {
         this.scene = scene;
         this.lineGraphGroup = scene.add.group();
         this.prevPigeonPopulation = initialPigeonPopulation;
-        this.minX = minX+10;
-        this.maxX = maxX-10;
-        this.minY = minY+10;
-        this.maxY = maxY-10;
+        this.minX = minX + 10;
+        this.maxX = maxX - 10;
+        this.minY = minY + 10;
+        this.maxY = maxY - 10;
 
         this.deltaX = xStep;
         this.deltaY = 0;
@@ -42,9 +44,9 @@ export default class PigeonSimulationGraph {
         this.deltaY = this.getYCoord(newPigeonPopulation) - this.getYCoord(this.prevPigeonPopulation);
 
         const newLine = this.scene.add.line(
+            this.maxX, (this.minY + this.maxY)/2,
+            - this.deltaX, - this.deltaY,
             0, 0,
-            this.maxX - this.deltaX, this.minY - this.deltaY,
-            this.maxX, this.minY,
             0x000000);
 
         this.lineGraphGroup.incX(- this.deltaX)
@@ -53,18 +55,21 @@ export default class PigeonSimulationGraph {
         this.lineGraphGroup.add(newLine);
         this.prevPigeonPopulation = newPigeonPopulation;
 
-        // Delete lines exceeding the min x boundary.
-        // We use a 'every' instead of a 'for-each' because every lets you terminate the loop early by not returning true.
-        this.lineGraphGroup.getChildren().every(
+        // Delete lines exceeding the min x boundary, hide lines exceeding y boundaries
+        this.lineGraphGroup.getChildren().forEach(
             // this type cast is OK, everything in group is a line.
             // @ts-ignore
             (child: Phaser.GameObjects.Line) => {
                 // console.log(child.x + this.xRight)
-                if (child.x + this.maxX < this.minX) {
+                if (child.x < this.minX) {
                     child.destroy();
-                    return true;
                 }
-                return false;
+
+                if (child.y > this.maxY || child.y < this.minY) {
+                    child.setAlpha(0);
+                } else {
+                    child.setAlpha(1);
+                }
             })
 
     }
