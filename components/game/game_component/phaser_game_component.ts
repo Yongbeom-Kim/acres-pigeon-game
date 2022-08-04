@@ -2,8 +2,8 @@
 // Dynamic import for phaser is not needed because this module is loaded after navigator loads.
 // const Phaser = (await import('phaser')).default;
 import Phaser from 'phaser';
-import MainScene from './scenes/main_scene/MainScene';
-import SampleScene from './scenes/start_scene/StartScene';
+import MainScene from '../../phaser_scenes/main_scene/MainScene';
+import SampleScene from '../../phaser_scenes/start_scene/StartScene';
 
 // Game Config
 const aspectRatio = 3/2;

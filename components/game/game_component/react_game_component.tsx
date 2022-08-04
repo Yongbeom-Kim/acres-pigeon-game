@@ -10,7 +10,7 @@ export default function GameComponent() {
     useEffect(() => {
         // Load in module and game
         // Only load in new module if it hasn't been loaded in before
-        gamePromise.current = gamePromise.current ?? import('../game_logic/game_main').then((x) => x.default);  
+        gamePromise.current = gamePromise.current ?? import('./phaser_game_component').then((x) => x.default);  
         // Cleanup, is not needed (only one game instance, since game is loaded from module).
         // return () => void gamePromise.then((instance) => instance.destroy(true, false))
     }, [])

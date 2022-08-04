@@ -3,7 +3,7 @@ import background from './assets/background_600x800.png';
 import start_game_button_spritesheet from './assets/start_button_spritesheet.png';
 import start_game_button_json from './assets/start_button_spritesheet.json' assert {type: 'json'};
 import MainScene from '../main_scene/MainScene';
-import make_hover_button from '../../utils/make_hover_button';
+import make_hover_button from '../main_scene/components/utils/make_hover_button';
 
 // I'm so annoyed WTF? The image keys in Phaser are GLOBAL NAMESPACE like what the heck man, so I can't use
 // 'background' key multiple times in different scenes, this is just bad design
@@ -41,9 +41,6 @@ export default class SampleScene extends Phaser.Scene {
                 this.scene.start(MainScene.SCENE_KEY);
             })
         });
-
-
-
     }
 
     update() {

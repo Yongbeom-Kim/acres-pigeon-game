@@ -2,9 +2,9 @@
 import background from './assets/background_600x800.png';
 import action_button_spritesheet from './assets/actions_button_spritesheet.png';
 import action_button_json from './assets/actions_button_spritesheet.json' assert {type: 'json'};
-import make_hover_button from '../../utils/make_hover_button';
+import make_hover_button from './components/utils/make_hover_button';
 import PigeonSimulationGraph from './components/PigeonSimulationGraph';
-import PigeonSimulation from './components/PigeonSimulation';
+import PigeonSimulation from '../../game/game_logic/PigeonSimulation';
 
 
 export default class MainScene extends Phaser.Scene {
